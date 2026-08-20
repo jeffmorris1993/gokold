@@ -1,26 +1,75 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
-
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --font-sans: var(--font-archivo);
+  --font-mono: var(--font-plex-mono);
+
+  --color-kold: #0a0a0b;
+  --color-kold-ink: #16171a;
+  --color-kold-panel: #15161a;
+  --color-kold-light: #f2efe9;
+  --color-kold-light-2: #e9e4da;
+  --color-kold-gold: #c9b28c;
+  --color-kold-cream: #faf8f4;
+  --color-kold-cream-2: #f6f4ef;
+  --color-kold-text: #e7e3db;
+  --color-kold-muted: #9d9992;
+  --color-kold-muted-2: #7d766a;
+  --color-kold-soft: #b4b0a8;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+html {
+  background: #0a0a0b;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  margin: 0;
+  overflow-x: hidden;
+  background: var(--color-kold);
+  color: var(--color-kold-text);
+  font-family: var(--font-archivo), Helvetica, Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+::selection {
+  background: #c9b28c;
+  color: #0a0a0b;
+}
+
+/* Scroll-reveal system: elements start hidden, [data-shown] flips them in.
+   Media reveals with a clip wipe (transform reserved for parallax); text rises. */
+[data-reveal="media"] {
+  opacity: 0;
+  clip-path: inset(14% 0 0 0);
+  transition:
+    opacity 1.05s ease,
+    clip-path 1.15s cubic-bezier(0.22, 0.61, 0.36, 1);
+  will-change: transform, clip-path;
+}
+
+[data-reveal="text"] {
+  opacity: 0;
+  transform: translateY(20px);
+  transition:
+    opacity 0.85s ease,
+    transform 0.95s cubic-bezier(0.22, 0.61, 0.36, 1);
+}
+
+[data-reveal="media"][data-shown="true"] {
+  opacity: 1;
+  clip-path: inset(0% 0 0 0);
+}
+
+[data-reveal="text"][data-shown="true"] {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  [data-reveal] {
+    opacity: 1 !important;
+    clip-path: none !important;
+    transform: none !important;
+    transition: none !important;
+  }
 }
