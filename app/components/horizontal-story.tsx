@@ -63,7 +63,7 @@ export default function HorizontalStory() {
         set(s2VeilRef.current, "opacity", "0");
         set(s3VeilRef.current, "opacity", "0");
         set(s3TextRef.current, "opacity", "1");
-        set(s3MediaRef.current, "transform", "scale(1.04)");
+        set(s3MediaRef.current, "transform", "none");
         set(s1TextRef.current, "transform", "none");
         set(s1MediaRef.current, "transform", "none");
         set(s2TextRef.current, "transform", "none");
@@ -104,7 +104,7 @@ export default function HorizontalStory() {
 
   const eyebrow = "font-mono text-[10px] tracking-[0.3em]";
   const scene =
-    "relative box-border flex-none overflow-hidden h-screen w-screen max-[760px]:motion-safe:absolute max-[760px]:motion-safe:inset-0 max-[760px]:motion-safe:w-full motion-reduce:h-[82vh] motion-reduce:w-full";
+    "relative box-border flex-none overflow-hidden h-svh w-screen max-[760px]:motion-safe:absolute max-[760px]:motion-safe:inset-0 max-[760px]:motion-safe:w-full motion-reduce:h-[82svh] motion-reduce:w-full";
 
   return (
     <section
@@ -112,7 +112,7 @@ export default function HorizontalStory() {
       ref={sectionRef}
       className="relative h-[380vh] bg-kold-light max-[760px]:h-[300vh] motion-reduce:h-auto!"
     >
-      <div className="sticky top-0 h-screen overflow-hidden motion-reduce:static motion-reduce:h-auto">
+      <div className="sticky top-0 h-svh overflow-hidden motion-reduce:static motion-reduce:h-auto">
         <div
           id="htrack"
           ref={trackRef}
@@ -124,7 +124,7 @@ export default function HorizontalStory() {
           >
             <div
               ref={s1TextRef}
-              className="z-2 p-[clamp(28px,6vh,110px)_clamp(24px,3.5vw,52px)_clamp(34px,7vh,110px)_clamp(20px,5vw,72px) max-[760px]:motion-safe:absolute max-[760px]:motion-safe:inset-0 max-[760px]:motion-safe:flex max-[760px]:motion-safe:flex-col max-[760px]:motion-safe:justify-end max-[760px]:motion-safe:bg-[linear-gradient(0deg,rgba(12,12,13,0.86)_0%,rgba(12,12,13,0.45)_46%,rgba(12,12,13,0.05)_78%)]"
+              className="z-2 p-[clamp(28px,6vh,110px)_clamp(24px,3.5vw,52px)_clamp(34px,7vh,110px)_clamp(20px,5vw,72px)] max-[760px]:pb-[max(72px,11svh)] max-[760px]:motion-safe:absolute max-[760px]:motion-safe:inset-0 max-[760px]:motion-safe:flex max-[760px]:motion-safe:flex-col max-[760px]:motion-safe:justify-end max-[760px]:motion-safe:bg-[linear-gradient(0deg,rgba(12,12,13,0.86)_0%,rgba(12,12,13,0.5)_42%,rgba(12,12,13,0.05)_75%)]"
             >
               <div
                 className={`${eyebrow} text-[#8a7f6b] max-[760px]:motion-safe:text-kold-gold`}
@@ -176,7 +176,7 @@ export default function HorizontalStory() {
                 src={inItsPlace}
                 alt="The KOLD case open on a refrigerator shelf, twelve capped vials seated in its insert"
                 fill
-                className="object-cover object-[center_58%]"
+                className="object-cover object-[center_58%] max-[760px]:object-[47%_center]"
                 sizes="100vw"
               />
             </div>
@@ -185,8 +185,7 @@ export default function HorizontalStory() {
             />
             <div
               ref={s3TextRef}
-              className="relative z-2 box-border flex h-full max-w-[46%] flex-col justify-end max-[760px]:max-w-full"
-              style={{ padding: "clamp(48px, 8vh, 96px) clamp(20px, 5vw, 72px)" }}
+              className="relative z-2 box-border flex h-full max-w-[46%] flex-col justify-end p-[clamp(48px,8vh,96px)_clamp(20px,5vw,72px)] max-[760px]:max-w-full max-[760px]:pb-[max(64px,10svh)]"
             >
               <div className={`${eyebrow} text-kold-gold`}>KOLD</div>
               <h2

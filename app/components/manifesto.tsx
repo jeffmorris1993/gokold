@@ -40,9 +40,9 @@ export default function Manifesto() {
   };
 
   return (
-    <section id="manifesto" ref={sectionRef} className="relative h-[320vh] bg-kold motion-reduce:h-screen">
+    <section id="manifesto" ref={sectionRef} className="relative h-[320vh] bg-kold motion-reduce:h-svh">
       <div
-        className="sticky top-0 flex h-screen flex-col items-center justify-center px-6 text-center"
+        className="sticky top-0 flex h-svh flex-col items-center justify-center px-6 text-center"
         style={{ gap: "clamp(10px, 1.4vh, 18px)" }}
       >
         {LINES.map((l, i) => (

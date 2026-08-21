@@ -45,3 +45,6 @@ next-env.d.ts
 
 # raw design/source assets (site copies live in public/)
 cinematics/
+
+# reference screenshots dropped in root
+/img*.png

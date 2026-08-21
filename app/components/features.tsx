@@ -79,7 +79,7 @@ export default function Features() {
           const media = (
             <Reveal
               kind="media"
-              className={`aspect-5/4 overflow-hidden bg-kold-panel ${BLEED} ${
+              className={`aspect-5/4 overflow-hidden bg-kold-panel max-[760px]:order-first ${BLEED} ${
                 f.wideOnNarrow ? "max-[760px]:aspect-4/3" : "max-[760px]:aspect-square"
               }`}
             >

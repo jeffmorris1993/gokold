@@ -14,11 +14,15 @@ export default function Statement() {
             Storage didn&rsquo;t have to look clinical.
           </h2>
         </Reveal>
-        <Reveal kind="media" className="aspect-16/10 overflow-hidden bg-black" style={{ marginTop: "clamp(56px, 9vh, 120px)" }}>
+        <Reveal
+          kind="media"
+          className="aspect-16/10 overflow-hidden bg-black max-[760px]:aspect-4/5"
+          style={{ marginTop: "clamp(56px, 9vh, 120px)" }}
+        >
           <Image
             src={statement}
             alt="The KOLD case with smoked lid photographed on black"
-            className="h-full w-full object-cover"
+            className="h-full w-full object-cover max-[760px]:object-[center_62%]"
             sizes="(max-width: 1280px) 100vw, 1280px"
           />
         </Reveal>
