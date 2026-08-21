@@ -63,13 +63,15 @@ export async function joinEarlyAccess(
         from: process.env.EARLY_ACCESS_FROM ?? "KOLD <onboarding@resend.dev>",
         to: [process.env.EARLY_ACCESS_TO ?? "hello@sirromstudios.com"],
         cc: [process.env.EARLY_ACCESS_CC ?? "adwatermedia@gmail.com"],
-        subject: "New KOLD early-access signup",
+        replyTo: email,
+        subject: `${fullName} joined the KOLD early-access list`,
+        html: signupEmailHtml(fullName, email),
         text: [
           "A new signup just landed on the KOLD early-access list.",
           "",
           `Name:  ${fullName}`,
           `Email: ${email}`,
-          `Time:  ${new Date().toISOString()}`,
+          `Time:  ${signupTime()}`,
         ].join("\n"),
       });
       if (mailError) console.error("joinEarlyAccess: Resend error", mailError);
@@ -79,4 +81,79 @@ export async function joinEarlyAccess(
   }
 
   return { status: "success" };
+}
+
+function signupTime() {
+  return new Date().toLocaleString("en-US", {
+    timeZone: "America/New_York",
+    month: "short",
+    day: "numeric",
+    year: "numeric",
+    hour: "numeric",
+    minute: "2-digit",
+    timeZoneName: "short",
+  });
+}
+
+const escapeHtml = (s: string) =>
+  s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
+
+// Brand-styled notification: dark KOLD card on the site's light ground.
+// Table layout + inline styles only, for email-client compatibility.
+function signupEmailHtml(fullName: string, email: string) {
+  const name = escapeHtml(fullName);
+  const addr = escapeHtml(email);
+  const sans = "Helvetica Neue, Helvetica, Arial, sans-serif";
+  const mono = "'SF Mono', 'Courier New', Courier, monospace";
+  const row = (label: string, value: string) => `
+    <tr>
+      <td style="padding:14px 0; border-top:1px solid rgba(231,227,219,0.12); font-family:${mono}; font-size:10px; letter-spacing:3px; color:#7d766a; text-transform:uppercase; vertical-align:baseline; width:110px;">${label}</td>
+      <td style="padding:14px 0 14px 16px; border-top:1px solid rgba(231,227,219,0.12); font-family:${sans}; font-size:15px; color:#e7e3db; vertical-align:baseline;">${value}</td>
+    </tr>`;
+
+  return `<!DOCTYPE html>
+<html>
+<body style="margin:0; padding:0; background:#f2efe9;">
+  <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#f2efe9;">
+    <tr>
+      <td align="center" style="padding:40px 16px;">
+        <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="max-width:560px; background:#0a0a0b;">
+          <tr>
+            <td style="padding:34px 40px 26px; border-bottom:1px solid rgba(231,227,219,0.12);">
+              <span style="font-family:${sans}; font-size:15px; font-weight:600; letter-spacing:8px; color:#f2efe9;">KOLD</span>
+            </td>
+          </tr>
+          <tr>
+            <td style="padding:38px 40px 6px;">
+              <div style="font-family:${mono}; font-size:11px; letter-spacing:4px; color:#c9b28c; text-transform:uppercase;">New early-access signup</div>
+              <div style="font-family:${sans}; font-size:30px; line-height:1.15; letter-spacing:-0.5px; color:#faf8f4; padding:16px 0 26px;">${name}</div>
+            </td>
+          </tr>
+          <tr>
+            <td style="padding:0 40px;">
+              <table role="presentation" width="100%" cellpadding="0" cellspacing="0">
+                ${row("Email", `<a href="mailto:${addr}" style="color:#c9b28c; text-decoration:none;">${addr}</a>`)}
+                ${row("Signed up", escapeHtml(signupTime()))}
+              </table>
+            </td>
+          </tr>
+          <tr>
+            <td style="padding:30px 40px 40px;">
+              <a href="https://supabase.com/dashboard/project/ifzmmtxxwoppwxxrqpjr/editor"
+                 style="display:inline-block; font-family:${mono}; font-size:11px; letter-spacing:3px; text-transform:uppercase; color:#0a0a0b; background:#e7e3db; padding:14px 24px; text-decoration:none;">View the full list &rarr;</a>
+            </td>
+          </tr>
+        </table>
+        <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="max-width:560px;">
+          <tr>
+            <td style="padding:18px 4px; font-family:${mono}; font-size:10px; letter-spacing:2px; color:#8a7f6b; text-transform:uppercase;">
+              Sent by the KOLD landing page &middot; <a href="https://gokold.com" style="color:#8a7f6b; text-decoration:none;">gokold.com</a>
+            </td>
+          </tr>
+        </table>
+      </td>
+    </tr>
+  </table>
+</body>
+</html>`;
 }
