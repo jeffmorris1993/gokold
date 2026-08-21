@@ -130,7 +130,7 @@ export default function HeroScrub() {
       className="relative h-[520vh] max-[760px]:h-[390vh] motion-reduce:h-svh!"
     >
       <div className="sticky top-0 flex h-svh w-full flex-col overflow-hidden bg-black">
-        <div className="relative h-full min-h-0 w-full flex-none overflow-hidden max-[760px]:h-auto max-[760px]:max-h-[64svh] max-[760px]:flex-1">
+        <div className="relative h-full min-h-0 w-full flex-none overflow-hidden">
           <video
             ref={videoRef}
             src="/kold-scroll.mp4"
@@ -138,7 +138,7 @@ export default function HeroScrub() {
             playsInline
             preload="auto"
             aria-label="Cinematic film of the KOLD case: a locked, smoked-lid vial case opening on a marble pedestal"
-            className="absolute inset-0 h-full w-full object-cover object-center max-[760px]:object-[center_45%]"
+            className="absolute inset-0 h-full w-full object-cover object-center max-[760px]:object-[58%_center]"
           />
           <div
             ref={scrimRef}
@@ -152,7 +152,7 @@ export default function HeroScrub() {
 
         <div
           ref={panelRef}
-          className="pointer-events-none absolute inset-x-0 bottom-0 flex flex-none flex-col items-start justify-end p-[clamp(28px,7vh,72px)_clamp(20px,5vw,72px)] text-left opacity-0 max-[760px]:static max-[760px]:p-[26px_20px_30px] motion-reduce:pointer-events-auto! motion-reduce:opacity-100!"
+          className="pointer-events-none absolute inset-x-0 bottom-0 flex flex-none flex-col items-start justify-end p-[clamp(28px,7vh,72px)_clamp(20px,5vw,72px)] text-left opacity-0 max-[760px]:p-[26px_20px_40px] motion-reduce:pointer-events-auto! motion-reduce:opacity-100!"
           style={{
             background:
               "linear-gradient(0deg, rgba(8,8,9,0.82) 0%, rgba(8,8,9,0.5) 55%, rgba(8,8,9,0) 100%)",
