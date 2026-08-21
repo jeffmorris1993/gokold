@@ -70,13 +70,31 @@ export default function HeroScrub() {
     window.addEventListener("touchstart", onFirstTouch, { passive: true, once: true });
 
     let raf = 0;
+    const narrowQuery = window.matchMedia("(max-width: 760px)");
     const setO = (el: HTMLElement | null, o: number) => {
       if (el) el.style.opacity = o.toFixed(3);
     };
 
     const tick = () => {
       raf = requestAnimationFrame(tick);
-      if (!near(section)) return;
+      if (!near(section)) {
+        // Fast flicks can leave the hero before the lerp finishes: once the
+        // section is fully above the viewport, park the film on its last frame.
+        const r = section.getBoundingClientRect();
+        if (
+          r.bottom < 200 &&
+          video.readyState >= 1 &&
+          isFinite(video.duration) &&
+          video.currentTime < video.duration - 0.2 &&
+          !video.seeking
+        ) {
+          try {
+            cur = video.duration - 0.04;
+            video.currentTime = cur;
+          } catch {}
+        }
+        return;
+      }
 
       const p = prog(section);
       const markO = ramp(p, 0.79, 0.815);
@@ -106,11 +124,19 @@ export default function HeroScrub() {
         if (!video.paused) video.pause();
         const scrub = clamp01((p - FILM_START) / (FILM_END - FILM_START));
         const target = scrub * (video.duration - 0.04);
-        cur += (target - cur) * 0.14;
+        // Phones seek slower (bigger frames, weaker decoders): lerp harder
+        // and snap outright when the gap is hopeless.
+        const diff = target - cur;
+        if (Math.abs(diff) > 2) cur = target;
+        else cur += diff * (narrowQuery.matches ? 0.3 : 0.14);
         if (Math.abs(target - cur) < 0.004) cur = target;
-        if (Math.abs(video.currentTime - cur) > 0.012 && !video.seeking) {
+        const delta = Math.abs(video.currentTime - cur);
+        if (delta > 0.012 && !video.seeking) {
           try {
-            video.currentTime = cur;
+            // Keyframes every 8 frames make fastSeek visually exact enough
+            // while the scrub is in fast motion; precise seeks settle it.
+            if (delta > 0.3 && typeof video.fastSeek === "function") video.fastSeek(cur);
+            else video.currentTime = cur;
           } catch {}
         }
       }
@@ -138,7 +164,7 @@ export default function HeroScrub() {
             playsInline
             preload="auto"
             aria-label="Cinematic film of the KOLD case: a locked, smoked-lid vial case opening on a marble pedestal"
-            className="absolute inset-0 h-full w-full object-cover object-center max-[760px]:object-[58%_center]"
+            className="absolute inset-0 h-full w-full object-cover object-center max-[760px]:top-1/2 max-[760px]:bottom-auto max-[760px]:h-[70svh] max-[760px]:-translate-y-1/2 max-[760px]:object-[58%_center]"
           />
           <div
             ref={scrimRef}
