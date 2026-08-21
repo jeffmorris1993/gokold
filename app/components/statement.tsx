@@ -4,7 +4,9 @@ import { statement } from "@/lib/assets";
 
 export default function Statement() {
   return (
-    <section className="bg-black" style={{ padding: "clamp(90px, 16vh, 220px) clamp(20px, 5vw, 80px)" }}>
+    // Bottom padding is 0 so the section ends at the image itself — the case's
+    // reflection fades straight into the next section's black.
+    <section className="bg-black" style={{ padding: "clamp(90px, 16vh, 220px) clamp(20px, 5vw, 80px) 0" }}>
       <div className="mx-auto max-w-[1280px] text-center">
         <Reveal>
           <h2

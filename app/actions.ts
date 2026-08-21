@@ -55,26 +55,53 @@ export async function joinEarlyAccess(
   }
   const isNew = !error;
 
-  // Notify the team; a mail failure must not fail the signup (the row is stored).
+  // Notify the team and welcome the signup; mail failures must not fail the
+  // signup (the row is already stored).
   if (isNew && process.env.RESEND_API_KEY) {
     try {
       const resend = new Resend(process.env.RESEND_API_KEY);
-      const { error: mailError } = await resend.emails.send({
-        from: process.env.EARLY_ACCESS_FROM ?? "KOLD <onboarding@resend.dev>",
-        to: [process.env.EARLY_ACCESS_TO ?? "hello@sirromstudios.com"],
-        cc: [process.env.EARLY_ACCESS_CC ?? "adwatermedia@gmail.com"],
-        replyTo: email,
-        subject: `${fullName} joined the KOLD early-access list`,
-        html: signupEmailHtml(fullName, email),
-        text: [
-          "A new signup just landed on the KOLD early-access list.",
-          "",
-          `Name:  ${fullName}`,
-          `Email: ${email}`,
-          `Time:  ${signupTime()}`,
-        ].join("\n"),
-      });
-      if (mailError) console.error("joinEarlyAccess: Resend error", mailError);
+      const from = process.env.EARLY_ACCESS_FROM ?? "KOLD <onboarding@resend.dev>";
+      const [notify, welcome] = await Promise.allSettled([
+        resend.emails.send({
+          from,
+          to: [process.env.EARLY_ACCESS_TO ?? "hello@sirromstudios.com"],
+          cc: [process.env.EARLY_ACCESS_CC ?? "adwatermedia@gmail.com"],
+          replyTo: email,
+          subject: `${fullName} joined the KOLD early-access list`,
+          html: signupEmailHtml(fullName, email),
+          text: [
+            "A new signup just landed on the KOLD early-access list.",
+            "",
+            `Name:  ${fullName}`,
+            `Email: ${email}`,
+            `Time:  ${signupTime()}`,
+          ].join("\n"),
+        }),
+        resend.emails.send({
+          from,
+          to: [email],
+          replyTo: process.env.EARLY_ACCESS_TO ?? "hello@sirromstudios.com",
+          subject: "You’re on the KOLD early-access list",
+          html: welcomeEmailHtml(fullName),
+          text: [
+            `Hi ${fullName.split(" ")[0]},`,
+            "",
+            "You're on the KOLD early-access list.",
+            "",
+            "KOLD is purpose-built refrigerated storage — cold storage, reconsidered.",
+            "You'll be the first to hear launch timing, and founding-member pricing",
+            "is reserved for the people on this list.",
+            "",
+            "Until then,",
+            "KOLD",
+            "https://gokold.com",
+          ].join("\n"),
+        }),
+      ]);
+      for (const r of [notify, welcome]) {
+        if (r.status === "rejected") console.error("joinEarlyAccess: Resend threw", r.reason);
+        else if (r.value.error) console.error("joinEarlyAccess: Resend error", r.value.error);
+      }
     } catch (err) {
       console.error("joinEarlyAccess: Resend threw", err);
     }
@@ -97,6 +124,79 @@ function signupTime() {
 
 const escapeHtml = (s: string) =>
   s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
+
+// Welcome email for the person who signed up. Same visual system as the
+// site: dark card, gold eyebrows, mono labels. Table layout + inline styles
+// for email-client compatibility; hero image hosted on gokold.com.
+function welcomeEmailHtml(fullName: string) {
+  const first = escapeHtml(fullName.trim().split(/\s+/)[0] || "there");
+  const sans = "Helvetica Neue, Helvetica, Arial, sans-serif";
+  const mono = "'SF Mono', 'Courier New', Courier, monospace";
+  const promise = (label: string, copy: string) => `
+    <tr>
+      <td style="padding:16px 0; border-top:1px solid rgba(231,227,219,0.12);">
+        <div style="font-family:${mono}; font-size:10px; letter-spacing:3px; color:#c9b28c; text-transform:uppercase;">${label}</div>
+        <div style="font-family:${sans}; font-size:15px; line-height:1.5; color:#b4b0a8; padding-top:6px;">${copy}</div>
+      </td>
+    </tr>`;
+
+  return `<!DOCTYPE html>
+<html>
+<body style="margin:0; padding:0; background:#f2efe9;">
+  <div style="display:none; max-height:0; overflow:hidden;">You&rsquo;ll be first to hear launch timing &mdash; founding-member pricing is reserved for this list.</div>
+  <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#f2efe9;">
+    <tr>
+      <td align="center" style="padding:40px 16px;">
+        <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="max-width:560px; background:#0a0a0b;">
+          <tr>
+            <td style="padding:34px 40px 26px;">
+              <span style="font-family:${sans}; font-size:15px; font-weight:600; letter-spacing:8px; color:#f2efe9;">KOLD</span>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <img src="https://gokold.com/email/kold-hero.jpg" width="560" alt="The KOLD case, smoked lid closed, photographed on black"
+                   style="display:block; width:100%; height:auto; border:0;" />
+            </td>
+          </tr>
+          <tr>
+            <td style="padding:36px 40px 8px;">
+              <div style="font-family:${mono}; font-size:11px; letter-spacing:4px; color:#c9b28c; text-transform:uppercase;">Founding access</div>
+              <div style="font-family:${sans}; font-size:32px; line-height:1.1; letter-spacing:-0.5px; color:#faf8f4; padding:16px 0 18px;">You&rsquo;re on the list.</div>
+              <div style="font-family:${sans}; font-size:15px; line-height:1.65; color:#b4b0a8; padding-bottom:26px;">
+                Hi ${first} &mdash; thanks for joining KOLD early access. Cold storage, reconsidered:
+                a considered home for the part of your routine nobody redesigned.
+              </div>
+            </td>
+          </tr>
+          <tr>
+            <td style="padding:0 40px;">
+              <table role="presentation" width="100%" cellpadding="0" cellspacing="0">
+                ${promise("Launch news", "You&rsquo;ll hear timing here first, before general availability.")}
+                ${promise("Founding-member pricing", "Reserved for the people on this list.")}
+              </table>
+            </td>
+          </tr>
+          <tr>
+            <td style="padding:30px 40px 42px;">
+              <a href="https://gokold.com"
+                 style="display:inline-block; font-family:${mono}; font-size:11px; letter-spacing:3px; text-transform:uppercase; color:#0a0a0b; background:#e7e3db; padding:14px 24px; text-decoration:none;">Visit gokold.com &rarr;</a>
+            </td>
+          </tr>
+        </table>
+        <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="max-width:560px;">
+          <tr>
+            <td style="padding:18px 4px; font-family:${mono}; font-size:10px; letter-spacing:2px; color:#8a7f6b; text-transform:uppercase;">
+              You&rsquo;re receiving this because you joined the list at <a href="https://gokold.com" style="color:#8a7f6b; text-decoration:none;">gokold.com</a>
+            </td>
+          </tr>
+        </table>
+      </td>
+    </tr>
+  </table>
+</body>
+</html>`;
+}
 
 // Brand-styled notification: dark KOLD card on the site's light ground.
 // Table layout + inline styles only, for email-client compatibility.
