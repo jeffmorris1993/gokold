@@ -16,13 +16,13 @@ export default function Statement() {
         </Reveal>
         <Reveal
           kind="media"
-          className="aspect-16/10 overflow-hidden bg-black max-[760px]:aspect-4/5"
+          className="aspect-16/10 overflow-hidden bg-black max-[760px]:aspect-4/3 max-[760px]:mx-[calc(clamp(20px,5vw,80px)*-1)]"
           style={{ marginTop: "clamp(56px, 9vh, 120px)" }}
         >
           <Image
             src={statement}
             alt="The KOLD case with smoked lid photographed on black"
-            className="h-full w-full object-cover max-[760px]:object-[center_62%]"
+            className="h-full w-full object-cover"
             sizes="(max-width: 1280px) 100vw, 1280px"
           />
         </Reveal>
