@@ -69,9 +69,9 @@ export default function Features() {
               letterSpacing: "-0.035em",
             }}
           >
-            Simple on the outside.
+            Clean by design.
             <br />
-            Considered everywhere else.
+            Thoughtful in every detail.
           </h2>
         </Reveal>
 
